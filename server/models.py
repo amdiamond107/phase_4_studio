@@ -17,7 +17,7 @@ class Artist(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False, unique=True)
     bio = db.Column(db.String)
 
-    products = db.relationship('Product', back_populates='artist')
+    products = db.relationship('Product', backref='artist', cascade='all, delete-orphan')
     categories = association_proxy('products', 'category',
         creator=lambda c: Product(category=c))
     
@@ -43,7 +43,7 @@ class Category(db.Model, SerializerMixin):
     category_name = db.Column(db.String, nullable=False)
     category_description = db.Column(db.String, nullable=False)
 
-    products = db.relationship('Product', back_populates='category')
+    products = db.relationship('Product', backref='category', cascade='all, delete-orphan')
     artists = association_proxy('products', 'artist',
         creator=lambda a: Product(artist=a))
     
@@ -73,15 +73,14 @@ class Product(db.Model, SerializerMixin):
     height = db.Column(db.Integer)
     description = db.Column(db.String, nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-    added_on = db.Column(db.DateTime, server_default = db.func.now())
     img_url = db.Column(db.String)
     subject = db.Column(db.String)
 
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
 
-    artist = db.relationship('Artist', back_populates='artists')
-    categories = db.relationship('Category', back_populates='categories')
+    # artist = db.relationship('Artist', back_populates='artists')
+    # categories = db.relationship('Category', back_populates='categories')
 
     validates('title')
     def validate_category_name(self, key, value):
