@@ -75,9 +75,10 @@ class ProductsById(Resource):
             for key in json_data:
                 setattr(product, key, json_data.get(key))
 
+                db.session.add(product)
                 db.session.commit()
 
-                response_body = product.to_dict()
+                response_body = product.to_dict(only=('id', 'title', 'price', 'length', 'width', 'height', 'description', 'quantity', 'img_url', 'subject', 'artist.name'))
                 status = 200
             
             return make_response(jsonify(response_body), status)
